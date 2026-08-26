@@ -3,7 +3,7 @@ import { randomBytes, scryptSync } from "crypto";
 import "dotenv/config";
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL ?? "postgresql://postgres:postgres@127.0.0.1:5432/app_db",
+  connectionString: process.env.DATABASE_URL ?? "postgresql://neondb_owner:npg_lC3jYNV8mhsp@ep-square-dust-ax2pzazi.c-4.us-east-2.aws.neon.tech/neondb?sslmode=verify-full",
 });
 
 function hash(pw) {

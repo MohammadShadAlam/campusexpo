@@ -10,7 +10,6 @@ const NAV: Record<string, Item[]> = {
   student: [
     { href: "/student", icon: "home", label: "Home" },
     { href: "/student/academics", icon: "book", label: "Academics" },
-    { href: "/student/assignments", icon: "doc", label: "Assignments" },
     { href: "/student/id-card", icon: "id", label: "ID Card" },
     { href: "/student/profile", icon: "user", label: "Profile" },
   ],
@@ -18,7 +17,6 @@ const NAV: Record<string, Item[]> = {
     { href: "/teacher", icon: "home", label: "Home" },
     { href: "/teacher/classes", icon: "users", label: "Classes" },
     { href: "/teacher/tasks", icon: "clipboard", label: "Tasks" },
-    { href: "/teacher/communication", icon: "megaphone", label: "Comms" },
     { href: "/teacher/profile", icon: "user", label: "Profile" },
   ],
   admin: [

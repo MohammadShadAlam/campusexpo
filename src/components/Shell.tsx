@@ -33,7 +33,8 @@ export function BottomNav({ role }: { role: string }) {
   const items = NAV[role] ?? NAV.student;
   return (
     <nav className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-slate-200 md:max-w-2xl md:mx-auto md:rounded-t-2xl">
-      <div className="grid grid-cols-5">
+      {/* CHANGE 1: grid grid-cols-5 ki jagah flex w-full use kiya hai */}
+      <div className="flex w-full">
         {items.map((it) => {
           const active =
             pathname === it.href || (it.href !== `/${role}` && pathname.startsWith(it.href));
@@ -41,7 +42,8 @@ export function BottomNav({ role }: { role: string }) {
             <Link
               key={it.href}
               href={it.href}
-              className={`flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold ${
+              {/* CHANGE 2: Shuru mein 'flex-1' add kiya hai taaki barabar space lein */}
+              className={`flex-1 flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold ${
                 active ? "text-navy" : "text-slate-400"
               }`}
             >

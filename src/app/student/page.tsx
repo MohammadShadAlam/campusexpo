@@ -35,8 +35,8 @@ export default async function StudentHome() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 font-sans">
       
-      {/* 1. Header Section - Normal Size */}
-      <header className="pt-10 pb-4 px-4">
+      {/* 1. Header Section - Reduced side padding to px-2.5 */}
+      <header className="pt-10 pb-4 px-2.5">
         <div className="flex justify-between items-start gap-3">
           <div className="flex-1 min-w-0">
             <p className="text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">
@@ -49,7 +49,6 @@ export default async function StudentHome() {
           </div>
           
           <div className="flex gap-2 mt-1 shrink-0">
-            {/* Fixed Notification Bell Link */}
             <Link href="/student/notifications" className="relative w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-200 shadow-sm active:scale-95 transition-transform">
               <Bell className="w-4 h-4 text-slate-600" />
               {unread > 0 && (
@@ -73,8 +72,8 @@ export default async function StudentHome() {
         </div>
       </header>
 
-      {/* 2. Academic Overview - Normal Size */}
-      <section className="px-4 mt-4">
+      {/* 2. Academic Overview - Reduced side padding to px-2.5 */}
+      <section className="px-2.5 mt-4">
         <h2 className="text-[16px] font-bold text-slate-900 mb-3">Academic Overview</h2>
         <div className="grid grid-cols-3 gap-2.5">
           <div className="bg-white rounded-[20px] p-3.5 flex flex-col justify-between aspect-square border border-slate-100 shadow-sm">
@@ -114,8 +113,8 @@ export default async function StudentHome() {
         </div>
       </section>
 
-      {/* 3. Quick Access - Centered Text & Normal Size */}
-      <section className="px-4 mt-6">
+      {/* 3. Quick Access - Reduced side padding to px-2.5 */}
+      <section className="px-2.5 mt-6">
         <h2 className="text-[16px] font-bold text-slate-900 mb-3">Quick Access</h2>
         <div className="grid grid-cols-4 gap-2.5">
           {[
@@ -138,8 +137,8 @@ export default async function StudentHome() {
         </div>
       </section>
 
-      {/* 4. Today's Classes */}
-      <section className="px-4 mt-6">
+      {/* 4. Today's Classes - Reduced side padding to px-2.5 */}
+      <section className="px-2.5 mt-6">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-[16px] font-bold text-slate-900">Today's Classes</h2>
           <Link href="/student/timetable" className="text-[13px] text-purple-600 font-semibold">View all &gt;</Link>
@@ -172,8 +171,8 @@ export default async function StudentHome() {
         </div>
       </section>
 
-      {/* 5. Recent Notices */}
-      <section className="px-4 mt-6 mb-4">
+      {/* 5. Recent Notices - Reduced side padding to px-2.5 */}
+      <section className="px-2.5 mt-6 mb-4">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-[16px] font-bold text-slate-900">Recent Notices</h2>
           <Link href="/student/notices" className="text-[13px] text-purple-600 font-semibold">View all &gt;</Link>

@@ -9,7 +9,7 @@ type Item = { href: string; icon: string; label: string };
 const NAV: Record<string, Item[]> = {
   student: [
     { href: "/student", icon: "home", label: "Home" },
-    { href: "/student/academics", icon: "book", label: "Academics" },
+    { href: "/student/timetable", icon: "clock", label: "Timetable" },
     { href: "/student/id-card", icon: "id", label: "ID Card" },
     { href: "/student/profile", icon: "user", label: "Profile" },
   ],

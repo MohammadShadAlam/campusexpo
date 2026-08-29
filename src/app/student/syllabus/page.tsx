@@ -9,7 +9,6 @@ export default async function SyllabusPage() {
   const rows = await syllabusFor(st.semester, st.section);
   const subjectNames = [...new Set(rows.map((r) => r.subject))];
 
-  // Alag-alag subjects ke liye alag icons aur colors ki list
   const iconsList = [
     { icon: Database, bg: "bg-purple-50", text: "text-purple-600" },
     { icon: Code, bg: "bg-blue-50", text: "text-blue-600" },
@@ -52,7 +51,6 @@ export default async function SyllabusPage() {
               const sampleUnit = units[0];
               const subjectCode = (sampleUnit as any)?.code || (sampleUnit as any)?.subjectCode || "";
 
-              // Har subject ko index ke hisaab se alag icon aur color milega
               const theme = iconsList[index % iconsList.length];
               const CurrentIcon = theme.icon;
 
@@ -75,17 +73,11 @@ export default async function SyllabusPage() {
                     </div>
                   </div>
 
-                  {/* Units List (Fixed Double Unit Text) */}
+                  {/* Units List (Duplicate Unit badge removed completely) */}
                   <div className="flex flex-col gap-2.5">
                     {units.map((u) => (
                       <div key={u.id} className="bg-white rounded-[20px] p-4 border border-slate-100 shadow-sm flex flex-col gap-1.5">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] uppercase tracking-wider font-extrabold text-purple-600 bg-purple-50 px-2.5 py-0.5 rounded-md">
-                            Unit {u.unitNumber}
-                          </span>
-                        </div>
-
-                        <p className="font-bold text-slate-900 text-[14px] mt-0.5">
+                        <p className="font-bold text-slate-900 text-[15px]">
                           {u.title}
                         </p>
 

@@ -1,80 +1,117 @@
+import Link from "next/link";
 import { requireUser } from "@/lib/auth";
-import { PageHeader, Card, EmptyState, SectionTitle, ProgressBar } from "@/components/ui";
 import { studentResults } from "@/lib/queries";
+import { ArrowLeft, BarChart2, Award, BookOpen, CheckCircle2 } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export default async function ResultsPage() {
   const user = await requireUser("student");
-  const rows = await studentResults(user.id);
-  const semesters = [...new Set(rows.map((r) => r.semester))].sort();
+  const st = user.student!;
+  const results = await studentResults(user.id);
 
-  const sgpa = (sem: number) => {
-    const list = rows.filter((r) => r.semester === sem);
-    if (!list.length) return "0.00";
-    const avg = list.reduce((a, r) => a + Number(r.gradePoint ?? 0), 0) / list.length;
-    return avg.toFixed(2);
-  };
-  const cgpa = rows.length
-    ? (rows.reduce((a, r) => a + Number(r.gradePoint ?? 0), 0) / rows.length).toFixed(2)
-    : "0.00";
-  const backlogs = rows.filter((r) => (r.internal ?? 0) + (r.external ?? 0) < 40).length;
+  // Semesters ki unique list nikalne ke liye taaki unke tabs/sections ban sakein
+  const semesters = [...new Set(results.map((r: any) => r.semester || st.semester))].sort((a: any, b: any) => b - a);
+
+  // Overall SGPA / CGPA calculate karne ke liye
+  const totalCredits = results.reduce((acc: number, r: any) => acc + (r.credits || 0), 0);
+  const totalPoints = results.reduce((acc: number, r: any) => acc + ((r.gradePoint || 0) * (r.credits || 0)), 0);
+  const overallCgpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : "0.00";
 
   return (
-    <>
-      <PageHeader title="Results" subtitle="Semester-wise academic performance" back="/student" />
-      {rows.length === 0 ? (
-        <EmptyState icon="chart" title="No results published" message="Your semester results have not been published yet." />
-      ) : (
-        <>
-          <div className="grid grid-cols-3 gap-3">
-            <Card className="text-center">
-              <p className="text-[11px] text-slate-500">CGPA</p>
-              <p className="text-2xl font-extrabold text-navy">{cgpa}</p>
-            </Card>
-            <Card className="text-center">
-              <p className="text-[11px] text-slate-500">Subjects</p>
-              <p className="text-2xl font-extrabold text-navy">{rows.length}</p>
-            </Card>
-            <Card className="text-center">
-              <p className="text-[11px] text-slate-500">Backlogs</p>
-              <p className={`text-2xl font-extrabold ${backlogs ? "text-rose-600" : "text-emerald-600"}`}>
-                {backlogs}
-              </p>
-            </Card>
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 font-sans">
+      
+      {/* 1. Header Section */}
+      <header className="pt-4 pb-3 px-2.5">
+        <div className="flex items-center gap-3.5">
+          <Link href="/student" className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-200 shadow-sm active:scale-95 transition-transform shrink-0">
+            <ArrowLeft className="w-5 h-5 text-slate-600" />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Results</h1>
+            <p className="text-[13px] text-slate-500 font-medium mt-0.5">
+              Semester {st.semester} • Section {st.section}
+            </p>
           </div>
+        </div>
+      </header>
 
-          {semesters.map((sem) => (
-            <div key={sem}>
-              <SectionTitle title={`Semester ${sem}`} action={<span className="text-[12px] font-bold text-gold">SGPA {sgpa(sem)}</span>} />
-              <div className="space-y-2">
-                {rows
-                  .filter((r) => r.semester === sem)
-                  .map((r) => {
-                    const total = (r.internal ?? 0) + (r.external ?? 0);
-                    return (
-                      <Card key={r.id}>
-                        <div className="flex items-center justify-between">
-                          <div className="min-w-0">
-                            <p className="font-semibold text-navy text-[14px] truncate">{r.subjectName}</p>
-                            <p className="text-[11px] text-slate-500">
-                              {r.subjectCode} · Internal {r.internal} · External {r.external}
+      {/* 2. Overall Performance Card */}
+      <div className="px-2.5 mt-2">
+        <div className="bg-gradient-to-br from-purple-700 to-indigo-800 rounded-[24px] p-5 text-white shadow-lg shadow-purple-900/10 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-purple-200">Overall Academic Performance</p>
+            <p className="text-3xl font-extrabold mt-1">CGPA: {overallCgpa}</p>
+            <p className="text-[12px] text-purple-200 mt-1 font-medium">Total Credits Earned: {totalCredits}</p>
+          </div>
+          <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/20">
+            <Award className="w-6 h-6 text-amber-300" />
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Semester-wise Results Section */}
+      <div className="px-2.5 mt-8">
+        <h2 className="text-[16px] font-extrabold text-slate-900 mb-4 px-1">Semester-wise Results</h2>
+
+        {results.length === 0 ? (
+          <div className="bg-white rounded-[24px] p-8 border border-slate-100 shadow-sm text-center">
+            <BarChart2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+            <h3 className="text-base font-bold text-slate-800">No results published</h3>
+            <p className="text-xs text-slate-500 mt-1">Your examination results will appear here once published.</p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-6">
+            {semesters.map((sem: any) => {
+              const semResults = results.filter((r: any) => (r.semester || st.semester) === sem);
+              
+              // Is specific semester ka SGPA calculate karne ke liye
+              const semCredits = semResults.reduce((acc: number, r: any) => acc + (r.credits || 0), 0);
+              const semPoints = semResults.reduce((acc: number, r: any) => acc + ((r.gradePoint || 0) * (r.credits || 0)), 0);
+              const semSgpa = semCredits > 0 ? (semPoints / semCredits).toFixed(2) : "0.00";
+
+              return (
+                <div key={sem} className="flex flex-col gap-3">
+                  {/* Semester Header Badge */}
+                  <div className="flex items-center justify-between px-1">
+                    <span className="text-[13px] font-extrabold text-purple-700 bg-purple-50 px-3 py-1 rounded-full border border-purple-100 flex items-center gap-1.5">
+                      <BookOpen className="w-3.5 h-3.5" /> Semester {sem}
+                    </span>
+                    <span className="text-[12px] font-bold text-slate-600 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm">
+                      SGPA: <strong className="text-slate-900">{semSgpa}</strong>
+                    </span>
+                  </div>
+
+                  {/* Subjects List for this Semester */}
+                  <div className="flex flex-col gap-2.5">
+                    {semResults.map((r: any) => (
+                      <div key={r.id || r.subject} className="bg-white rounded-[20px] p-4 border border-slate-100 shadow-sm flex items-center justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-extrabold text-slate-900 text-[14px] truncate">{r.subjectName || r.subject}</p>
+                          <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                            {r.subjectCode || "Code N/A"} • <strong className="text-slate-600">{r.credits} Credits</strong>
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-3 shrink-0">
+                          <div className="text-right">
+                            <span className="text-[15px] font-extrabold text-purple-700 bg-purple-50 px-3 py-1 rounded-xl border border-purple-100">
+                              {r.grade || "A"}
+                            </span>
+                            <p className="text-[10px] font-bold text-slate-400 mt-1">
+                              {r.marks ? `${r.marks} Marks` : `${r.gradePoint || 0} Points`}
                             </p>
                           </div>
-                          <div className="text-right shrink-0 ml-3">
-                            <p className="text-lg font-extrabold text-navy">{r.grade}</p>
-                            <p className="text-[11px] text-slate-500">{total}/100</p>
-                          </div>
                         </div>
-                        <div className="mt-2">
-                          <ProgressBar value={total} tone={total < 40 ? "red" : "navy"} />
-                        </div>
-                      </Card>
-                    );
-                  })}
-              </div>
-            </div>
-          ))}
-        </>
-      )}
-    </>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

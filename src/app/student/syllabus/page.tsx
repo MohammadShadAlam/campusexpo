@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { syllabusFor } from "@/lib/queries";
-import { ArrowLeft, BookOpen, Layers } from "lucide-react";
+import { ArrowLeft, BookOpen, Layers, Hash } from "lucide-react";
 
 export default async function SyllabusPage() {
   const user = await requireUser("student");
@@ -21,7 +21,7 @@ export default async function SyllabusPage() {
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Syllabus</h1>
             <p className="text-[13px] text-slate-500 font-medium mt-0.5">
-              Semester {st.semester} coverage
+              Semester {st.semester} course curriculum
             </p>
           </div>
         </div>
@@ -39,52 +39,48 @@ export default async function SyllabusPage() {
           <div className="flex flex-col gap-6">
             {subjectNames.map((name) => {
               const units = rows.filter((r) => r.subject === name);
-              const avg = Math.round(units.reduce((a, u) => a + (u.completion ?? 0), 0) / units.length);
+              // Extracting code if available in the data, or showing a clean layout
+              const sampleUnit = units[0];
+              const subjectCode = (sampleUnit as any)?.code || (sampleUnit as any)?.subjectCode || "";
 
               return (
                 <div key={name}>
-                  {/* Subject Title & Average Completion Badge */}
-                  <div className="flex justify-between items-center mb-3 px-1">
-                    <h2 className="text-[16px] font-bold text-slate-900 flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-purple-600" />
-                      {name}
-                    </h2>
-                    <span className="text-[11px] font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-100">
-                      {avg}% complete
-                    </span>
+                  {/* Subject Title & Code Header */}
+                  <div className="mb-3 px-1">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-[16px] font-extrabold text-slate-900 flex items-center gap-2">
+                        <Layers className="w-4 h-4 text-purple-600" />
+                        {name}
+                      </h2>
+                      {subjectCode && (
+                        <span className="text-[11px] font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-100 flex items-center gap-1">
+                          <Hash className="w-3 h-3" /> {subjectCode}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Units List */}
+                  {/* Units List (Only content & topics, no percentages) */}
                   <div className="flex flex-col gap-2.5">
-                    {units.map((u) => {
-                      const completion = u.completion ?? 0;
-                      return (
-                        <div key={u.id} className="bg-white rounded-[20px] p-4 border border-slate-100 shadow-sm flex flex-col gap-2.5">
-                          <div className="flex items-center justify-between gap-2">
-                            <p className="font-bold text-slate-900 text-[14px]">
-                              Unit {u.unitNumber} • <span className="font-semibold text-slate-700">{u.title}</span>
-                            </p>
-                            <span className="text-[12px] font-bold text-slate-500 shrink-0">
-                              {completion}%
-                            </span>
-                          </div>
-
-                          {u.topics && (
-                            <p className="text-[12px] text-slate-500 leading-relaxed line-clamp-2">
-                              {u.topics}
-                            </p>
-                          )}
-
-                          {/* Custom Styled Progress Bar */}
-                          <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-1">
-                            <div 
-                              className="bg-amber-500 h-full rounded-full transition-all duration-500" 
-                              style={{ width: `${completion}%` }}
-                            />
-                          </div>
+                    {units.map((u) => (
+                      <div key={u.id} className="bg-white rounded-[20px] p-4 border border-slate-100 shadow-sm flex flex-col gap-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="font-bold text-slate-900 text-[14px]">
+                            Unit {u.unitNumber}
+                          </p>
                         </div>
-                      );
-                    })}
+
+                        <p className="font-semibold text-slate-800 text-[13px]">
+                          {u.title}
+                        </p>
+
+                        {u.topics && (
+                          <p className="text-[12px] text-slate-500 leading-relaxed mt-0.5">
+                            {u.topics}
+                          </p>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               );

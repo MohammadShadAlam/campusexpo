@@ -44,13 +44,18 @@ export default async function StudentAssignments() {
         </div>
       </header>
 
-      {/* 2. Overview Count Cards */}
+      {/* 2. Overview Count Cards (Changed to 2x2 grid for perfect mobile view) */}
       <div className="px-2.5 mt-2 mb-6">
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 gap-2.5">
           {Object.entries(counts).map(([k, v]) => (
-            <div key={k} className="bg-white rounded-[18px] p-3 text-center border border-slate-100 shadow-sm">
-              <p className="text-lg font-extrabold text-slate-900">{v}</p>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 capitalize">{k}</p>
+            <div key={k} className="bg-white rounded-[20px] p-3.5 text-center border border-slate-100 shadow-sm flex items-center justify-between px-5">
+              <div className="text-left">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider capitalize">{k}</p>
+                <p className="text-xl font-extrabold text-slate-900 mt-0.5">{v}</p>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center font-extrabold text-xs">
+                {v}
+              </div>
             </div>
           ))}
         </div>
@@ -71,7 +76,6 @@ export default async function StudentAssignments() {
               return (
                 <div key={r.id} className="bg-white rounded-[20px] p-4.5 border border-slate-100 shadow-sm flex flex-col gap-3">
                   
-                  {/* Title & Status Badge */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="font-extrabold text-slate-900 text-[15px] leading-snug">{r.title}</p>
@@ -84,14 +88,12 @@ export default async function StudentAssignments() {
                     </span>
                   </div>
 
-                  {/* Description */}
                   {r.description && (
                     <p className="text-[13px] text-slate-600 font-medium leading-relaxed">
                       {r.description}
                     </p>
                   )}
 
-                  {/* Instructions */}
                   {r.instructions && (
                     <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
                       <p className="text-[12px] text-slate-600">
@@ -100,7 +102,6 @@ export default async function StudentAssignments() {
                     </div>
                   )}
 
-                  {/* Graded Marks Box */}
                   {r.submissionStatus === "graded" && (
                     <div className="rounded-2xl bg-emerald-50/70 border border-emerald-100 p-3.5 flex flex-col gap-1">
                       <p className="text-[13px] font-extrabold text-emerald-900 flex items-center gap-1.5">
@@ -111,7 +112,6 @@ export default async function StudentAssignments() {
                     </div>
                   )}
 
-                  {/* Submission Form Details */}
                   {r.submissionStatus !== "graded" && (
                     <div className="mt-1 pt-2 border-t border-slate-100">
                       <details className="group">

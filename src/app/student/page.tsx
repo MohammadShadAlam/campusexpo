@@ -12,8 +12,10 @@ import {
   Bell, TrendingUp, Star, Zap, 
   Calendar, Clock, Award, 
   BookOpen, BarChart, Users, MapPin,
-  Megaphone
+  Megaphone, GraduationCap
 } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export default async function StudentHome() {
   const user = await requireUser("student");
@@ -35,8 +37,8 @@ export default async function StudentHome() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 font-sans">
       
-      {/* 1. Header Section - Reduced side padding to px-2.5 */}
-      <header className="pt-10 pb-4 px-2.5">
+      {/* 1. Header Section */}
+      <header className="pt-4 pb-3 px-2.5">
         <div className="flex justify-between items-start gap-3">
           <div className="flex-1 min-w-0">
             <p className="text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">
@@ -72,7 +74,7 @@ export default async function StudentHome() {
         </div>
       </header>
 
-      {/* 2. Academic Overview - Reduced side padding to px-2.5 */}
+      {/* 2. Academic Overview */}
       <section className="px-2.5 mt-4">
         <h2 className="text-[16px] font-bold text-slate-900 mb-3">Academic Overview</h2>
         <div className="grid grid-cols-3 gap-2.5">
@@ -113,7 +115,7 @@ export default async function StudentHome() {
         </div>
       </section>
 
-      {/* 3. Quick Access - Reduced side padding to px-2.5 */}
+      {/* 3. Quick Access (Timetable ki jagah Academics add kar diya hai) */}
       <section className="px-2.5 mt-6">
         <h2 className="text-[16px] font-bold text-slate-900 mb-3">Quick Access</h2>
         <div className="grid grid-cols-4 gap-2.5">
@@ -122,7 +124,7 @@ export default async function StudentHome() {
             { href: "/student/syllabus", icon: BookOpen, label: "Syllabus", color: "text-purple-600", bg: "bg-purple-50" },
             { href: "/student/assignments", icon: Zap, label: "Tasks", color: "text-amber-600", bg: "bg-amber-50" },
             { href: "/student/attendance", icon: Calendar, label: "Attend.", color: "text-emerald-600", bg: "bg-emerald-50" },
-            { href: "/student/timetable", icon: Clock, label: "Timetable", color: "text-indigo-600", bg: "bg-indigo-50" },
+            { href: "/student/academics", icon: GraduationCap, label: "Academics", color: "text-indigo-600", bg: "bg-indigo-50" }, // Timetable ki jagah Academics
             { href: "/student/materials", icon: Award, label: "Material", color: "text-rose-600", bg: "bg-rose-50" },
             { href: "/student/doubts", icon: Users, label: "Doubts", color: "text-pink-600", bg: "bg-pink-50" },
             { href: "/student/leave", icon: MapPin, label: "Leave", color: "text-orange-600", bg: "bg-orange-50" },
@@ -137,7 +139,7 @@ export default async function StudentHome() {
         </div>
       </section>
 
-      {/* 4. Today's Classes - Reduced side padding to px-2.5 */}
+      {/* 4. Today's Classes */}
       <section className="px-2.5 mt-6">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-[16px] font-bold text-slate-900">Today's Classes</h2>
@@ -171,7 +173,7 @@ export default async function StudentHome() {
         </div>
       </section>
 
-      {/* 5. Recent Notices - Reduced side padding to px-2.5 */}
+      {/* 5. Recent Notices */}
       <section className="px-2.5 mt-6 mb-4">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-[16px] font-bold text-slate-900">Recent Notices</h2>

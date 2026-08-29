@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { studentAssignments } from "@/lib/queries";
 import { submitAssignmentAction } from "@/lib/actions";
-import { ArrowLeft, FileText, CheckCircle2, Upload, Send } from "lucide-react";
+import { ArrowLeft, FileText, CheckCircle2, Upload, Send, Clock, AlertCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -13,15 +13,15 @@ export default async function StudentAssignments() {
   const now = new Date();
 
   const state = (r: (typeof rows)[number]) => {
-    if (r.submissionStatus === "graded") return { label: "Completed", tone: "bg-emerald-50 text-emerald-700 border-emerald-100" };
-    if (r.submissionId) return { label: r.submissionStatus === "late" ? "Late" : "Submitted", tone: "bg-indigo-50 text-indigo-700 border-indigo-100" };
-    if (new Date(r.dueDate) < now) return { label: "Overdue", tone: "bg-rose-50 text-rose-700 border-rose-100" };
-    return { label: "Pending", tone: "bg-amber-50 text-amber-700 border-amber-100" };
+    if (r.submissionStatus === "graded") return { label: "Completed", tone: "bg-emerald-50 text-emerald-700 border-emerald-200" };
+    if (r.submissionId) return { label: r.submissionStatus === "late" ? "Submitted (Late)" : "Submitted", tone: "bg-indigo-50 text-indigo-700 border-indigo-200" };
+    if (new Date(r.dueDate) < now) return { label: "Overdue", tone: "bg-rose-50 text-rose-700 border-rose-200" };
+    return { label: "Pending", tone: "bg-amber-50 text-amber-700 border-amber-200" };
   };
 
   const counts = {
     pending: rows.filter((r) => state(r).label === "Pending").length,
-    submitted: rows.filter((r) => state(r).label === "Submitted" || state(r).label === "Late").length,
+    submitted: rows.filter((r) => state(r).label === "Submitted" || state(r).label === "Submitted (Late)").length,
     completed: rows.filter((r) => state(r).label === "Completed").length,
     overdue: rows.filter((r) => state(r).label === "Overdue").length,
   };
@@ -44,7 +44,7 @@ export default async function StudentAssignments() {
         </div>
       </header>
 
-      {/* 2. Overview Count Cards (Changed to 2x2 grid for perfect mobile view) */}
+      {/* 2. Overview Count Cards */}
       <div className="px-2.5 mt-2 mb-6">
         <div className="grid grid-cols-2 gap-2.5">
           {Object.entries(counts).map(([k, v]) => (
@@ -73,9 +73,12 @@ export default async function StudentAssignments() {
           <div className="flex flex-col gap-3">
             {rows.map((r) => {
               const st2 = state(r);
+              const isSubmittedOrGraded = Boolean(r.submissionId) || r.submissionStatus === "graded";
+
               return (
                 <div key={r.id} className="bg-white rounded-[20px] p-4.5 border border-slate-100 shadow-sm flex flex-col gap-3">
                   
+                  {/* Title & Status Badge */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="font-extrabold text-slate-900 text-[15px] leading-snug">{r.title}</p>
@@ -83,17 +86,38 @@ export default async function StudentAssignments() {
                         {r.subject} • Due {r.dueDate} • <span className="text-purple-600 font-bold">Max {r.maxMarks} marks</span>
                       </p>
                     </div>
-                    <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider border shrink-0 ${st2.tone}`}>
+                    <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider border shrink-0 ${st2.tone}`}>
                       {st2.label}
                     </span>
                   </div>
 
+                  {/* Submission Status Detail Banner */}
+                  <div className={`rounded-xl p-3 flex items-center gap-2.5 border ${isSubmittedOrGraded ? 'bg-indigo-50/50 border-indigo-100 text-indigo-900' : 'bg-amber-50/50 border-amber-100 text-amber-900'}`}>
+                    {isSubmittedOrGraded ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0" />
+                        <p className="text-[12px] font-bold">
+                          Status: <span className="text-indigo-700">You have successfully submitted this assignment.</span>
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                        <p className="text-[12px] font-bold">
+                          Status: <span className="text-amber-700">Not submitted yet. Please upload your work below.</span>
+                        </p>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Description */}
                   {r.description && (
                     <p className="text-[13px] text-slate-600 font-medium leading-relaxed">
                       {r.description}
                     </p>
                   )}
 
+                  {/* Instructions */}
                   {r.instructions && (
                     <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
                       <p className="text-[12px] text-slate-600">
@@ -102,6 +126,7 @@ export default async function StudentAssignments() {
                     </div>
                   )}
 
+                  {/* Graded Marks Box */}
                   {r.submissionStatus === "graded" && (
                     <div className="rounded-2xl bg-emerald-50/70 border border-emerald-100 p-3.5 flex flex-col gap-1">
                       <p className="text-[13px] font-extrabold text-emerald-900 flex items-center gap-1.5">
@@ -112,6 +137,7 @@ export default async function StudentAssignments() {
                     </div>
                   )}
 
+                  {/* Submission Form Details */}
                   {r.submissionStatus !== "graded" && (
                     <div className="mt-1 pt-2 border-t border-slate-100">
                       <details className="group">

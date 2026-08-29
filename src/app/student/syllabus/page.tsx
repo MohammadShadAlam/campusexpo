@@ -1,13 +1,23 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { syllabusFor } from "@/lib/queries";
-import { ArrowLeft, BookOpen, Layers, Hash } from "lucide-react";
+import { ArrowLeft, BookOpen, Layers, Hash, Cpu, Database, Code, Globe, Shield } from "lucide-react";
 
 export default async function SyllabusPage() {
   const user = await requireUser("student");
   const st = user.student!;
   const rows = await syllabusFor(st.semester, st.section);
   const subjectNames = [...new Set(rows.map((r) => r.subject))];
+
+  // Alag-alag subjects ke liye alag icons aur colors ki list
+  const iconsList = [
+    { icon: Database, bg: "bg-purple-50", text: "text-purple-600" },
+    { icon: Code, bg: "bg-blue-50", text: "text-blue-600" },
+    { icon: Cpu, bg: "bg-emerald-50", text: "text-emerald-600" },
+    { icon: Globe, bg: "bg-amber-50", text: "text-amber-600" },
+    { icon: Shield, bg: "bg-rose-50", text: "text-rose-600" },
+    { icon: BookOpen, bg: "bg-indigo-50", text: "text-indigo-600" },
+  ];
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 font-sans">
@@ -37,40 +47,45 @@ export default async function SyllabusPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-6">
-            {subjectNames.map((name) => {
+            {subjectNames.map((name, index) => {
               const units = rows.filter((r) => r.subject === name);
-              // Extracting code if available in the data, or showing a clean layout
               const sampleUnit = units[0];
               const subjectCode = (sampleUnit as any)?.code || (sampleUnit as any)?.subjectCode || "";
 
+              // Har subject ko index ke hisaab se alag icon aur color milega
+              const theme = iconsList[index % iconsList.length];
+              const CurrentIcon = theme.icon;
+
               return (
                 <div key={name}>
-                  {/* Subject Title & Code Header */}
+                  {/* Subject Title & Unique Icon Header */}
                   <div className="mb-3 px-1">
                     <div className="flex items-center justify-between">
                       <h2 className="text-[16px] font-extrabold text-slate-900 flex items-center gap-2">
-                        <Layers className="w-4 h-4 text-purple-600" />
+                        <span className={`w-7 h-7 rounded-lg ${theme.bg} flex items-center justify-center shrink-0`}>
+                          <CurrentIcon className={`w-4 h-4 ${theme.text}`} />
+                        </span>
                         {name}
                       </h2>
                       {subjectCode && (
-                        <span className="text-[11px] font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-100 flex items-center gap-1">
-                          <Hash className="w-3 h-3" /> {subjectCode}
+                        <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200 flex items-center gap-1">
+                          <Hash className="w-3 h-3 text-slate-400" /> {subjectCode}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Units List (Only content & topics, no percentages) */}
+                  {/* Units List (Fixed Double Unit Text) */}
                   <div className="flex flex-col gap-2.5">
                     {units.map((u) => (
-                      <div key={u.id} className="bg-white rounded-[20px] p-4 border border-slate-100 shadow-sm flex flex-col gap-2">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="font-bold text-slate-900 text-[14px]">
+                      <div key={u.id} className="bg-white rounded-[20px] p-4 border border-slate-100 shadow-sm flex flex-col gap-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] uppercase tracking-wider font-extrabold text-purple-600 bg-purple-50 px-2.5 py-0.5 rounded-md">
                             Unit {u.unitNumber}
-                          </p>
+                          </span>
                         </div>
 
-                        <p className="font-semibold text-slate-800 text-[13px]">
+                        <p className="font-bold text-slate-900 text-[14px] mt-0.5">
                           {u.title}
                         </p>
 

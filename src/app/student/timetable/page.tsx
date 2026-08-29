@@ -1,16 +1,27 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { weeklyTimetable } from "@/lib/queries";
-import { ArrowLeft, Clock, MapPin, BookOpen, User, CalendarX } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, User, CalendarX } from "lucide-react";
 
 const DAYS = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const SHORT_DAYS = ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export default async function StudentTimetable() {
+export default async function StudentTimetable({
+  searchParams,
+}: {
+  searchParams?: { day?: string };
+}) {
   const user = await requireUser("student");
   const st = user.student!;
   const rows = await weeklyTimetable(st.semester, st.section);
-  const today = new Date().getDay() === 0 ? 1 : new Date().getDay(); // Default to Monday if Sunday
+  
+  const today = new Date().getDay() === 0 ? 1 : new Date().getDay();
+  
+  // Kaunsa din select hai wo check karega (Default 'Today' hoga)
+  const activeDay = searchParams?.day ? parseInt(searchParams.day) : today;
+  
+  // Sirf select kiye hue din ki classes filter karega
+  const items = rows.filter((r) => r.day === activeDay);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 font-sans">
@@ -40,100 +51,97 @@ export default async function StudentTimetable() {
         </div>
       ) : (
         <>
-          {/* 2. Days Selector (Horizontal Scroll) */}
-          <div className="px-2.5 mb-6 sticky top-0 bg-slate-50/95 backdrop-blur-md py-3 z-10 border-b border-slate-200/50">
+          {/* 2. Days Selector (Clickable Tabs) */}
+          <div className="px-2.5 mb-5 sticky top-0 bg-slate-50/95 backdrop-blur-md py-3 z-10 border-b border-slate-200/50">
             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
               {[1, 2, 3, 4, 5, 6].map((d) => {
-                // Check if this day has classes
                 const hasClasses = rows.some((r) => r.day === d);
                 if (!hasClasses) return null;
 
+                const isActive = d === activeDay;
+
                 return (
-                  <a 
+                  <Link 
                     key={d} 
-                    href={`#day-${d}`} 
-                    className={`px-4 py-2 rounded-full text-[13px] font-bold shrink-0 transition-colors ${
-                      d === today 
+                    href={`/student/timetable?day=${d}`}
+                    scroll={false} // Click karne par page upar jump nahi karega
+                    className={`px-4 py-1.5 rounded-full text-[12px] font-bold shrink-0 transition-colors ${
+                      isActive
                         ? 'bg-purple-600 text-white shadow-md' 
                         : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                     }`}
                   >
                     {SHORT_DAYS[d]}
-                  </a>
+                  </Link>
                 );
               })}
             </div>
           </div>
 
-          {/* 3. Timetable List */}
+          {/* 3. Timetable List (Sirf Selected Din Ki Classes) */}
           <div className="px-2.5">
-            {[1, 2, 3, 4, 5, 6].map((d) => {
-              const items = rows.filter((r) => r.day === d);
-              if (!items.length) return null;
-
-              return (
-                <div key={d} id={`day-${d}`} className="mb-8 scroll-mt-24">
-                  <div className="flex justify-between items-center mb-4 px-1">
-                    <h2 className="text-[17px] font-bold text-slate-900">{DAYS[d]}'s Classes</h2>
-                    {d === today && (
-                      <span className="text-[10px] bg-amber-100 text-amber-700 font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wide">
-                        Today
-                      </span>
-                    )}
-                  </div>
+            <div className="flex justify-between items-center mb-3.5 px-1">
+              <h2 className="text-[15px] font-bold text-slate-900">{DAYS[activeDay]}'s Classes</h2>
+              {activeDay === today && (
+                <span className="text-[9px] bg-amber-100 text-amber-700 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                  Today
+                </span>
+              )}
+            </div>
+            
+            {items.length === 0 ? (
+               <div className="text-center py-10 bg-white rounded-[16px] border border-slate-100">
+                 <p className="text-sm text-slate-500">No classes scheduled for {DAYS[activeDay]}</p>
+               </div>
+            ) : (
+              <div className="flex flex-col gap-2.5">
+                {items.map((c, index) => {
+                  const colors = ["bg-indigo-500", "bg-amber-500", "bg-emerald-500", "bg-rose-500", "bg-blue-500"];
+                  const barColor = colors[index % colors.length];
                   
-                  <div className="flex flex-col gap-3">
-                    {items.map((c, index) => {
-                      // Dynamically assign left bar colors
-                      const colors = ["bg-indigo-500", "bg-amber-500", "bg-emerald-500", "bg-rose-500", "bg-blue-500"];
-                      const barColor = colors[index % colors.length];
-                      
-                      // Badge color based on class type
-                      const isSpecial = c.type?.toLowerCase() === "lab" || c.type?.toLowerCase() === "special";
-                      const badgeBg = isSpecial ? "bg-amber-100 text-amber-700" : "bg-indigo-100 text-indigo-700";
+                  const isSpecial = c.type?.toLowerCase() === "lab" || c.type?.toLowerCase() === "special";
+                  const badgeBg = isSpecial ? "bg-amber-100 text-amber-700" : "bg-indigo-100 text-indigo-700";
 
-                      return (
-                        <div key={c.id} className="bg-white rounded-[22px] p-4.5 border border-slate-100 shadow-sm flex gap-3 relative overflow-hidden">
-                          {/* Left Color Bar */}
-                          <div className={`absolute left-0 top-4 bottom-4 w-1.5 rounded-r-full ${barColor}`} />
+                  return (
+                    // Slim Card Design (Padding and gap reduced)
+                    <div key={c.id} className="bg-white rounded-[16px] p-3 border border-slate-100 shadow-sm flex gap-3 relative overflow-hidden">
+                      {/* Thinner Left Color Bar */}
+                      <div className={`absolute left-0 top-3 bottom-3 w-1 rounded-r-full ${barColor}`} />
 
-                          <div className="flex-1 ml-2">
-                            {/* Time & Badge */}
-                            <div className="flex justify-between items-center mb-2">
-                              <p className="text-[13px] font-bold text-slate-700 flex items-center gap-1.5">
-                                <Clock className="w-3.5 h-3.5 text-slate-400" /> 
-                                {c.start} - {c.end}
-                              </p>
-                              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${badgeBg}`}>
-                                {c.type ?? "Theory"}
-                              </span>
-                            </div>
-
-                            {/* Subject */}
-                            <p className="text-[16px] font-extrabold text-slate-900 mb-2.5 leading-snug">
-                              {c.subject}
-                            </p>
-
-                            
-                           {/* Details (Room, Faculty) */}
-<div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] font-medium text-slate-500">
-  <span className="flex items-center gap-1">
-    <MapPin className="w-3.5 h-3.5 text-slate-400"/> 
-    {c.room}
-  </span>
-  <span className="flex items-center gap-1 w-full mt-0.5">
-    <User className="w-3.5 h-3.5 text-slate-400"/> 
-    {c.faculty ?? "Faculty TBA"}
-  </span>
-</div>
-                          </div>
+                      <div className="flex-1 ml-1.5">
+                        {/* Time & Badge */}
+                        <div className="flex justify-between items-center mb-1">
+                          <p className="text-[12px] font-bold text-slate-700 flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 text-slate-400" /> 
+                            {c.start} - {c.end}
+                          </p>
+                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${badgeBg}`}>
+                            {c.type ?? "Theory"}
+                          </span>
                         </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
+
+                        {/* Subject */}
+                        <p className="text-[14px] font-bold text-slate-900 mb-1.5 leading-tight truncate">
+                          {c.subject}
+                        </p>
+
+                        {/* Details (Room, Faculty in single row) */}
+                        <div className="flex items-center gap-4 text-[11px] font-medium text-slate-500">
+                          <span className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-slate-400"/> 
+                            {c.room}
+                          </span>
+                          <span className="flex items-center gap-1.5 truncate">
+                            <User className="w-3.5 h-3.5 text-slate-400"/> 
+                            {c.faculty ?? "Faculty TBA"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </>
       )}

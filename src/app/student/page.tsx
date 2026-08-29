@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
-import { AppHeader } from "@/components/AppHeader";
-import { Card, QuickAction, SectionTitle, StatCard, EmptyState, Badge } from "@/components/ui";
 import {
   greeting,
   studentAttendanceStats,
@@ -10,8 +8,15 @@ import {
   studentNotices,
   unreadCount,
 } from "@/lib/queries";
+import { 
+  Bell, TrendingUp, Star, Zap, 
+  Calendar, Clock, Award, 
+  BookOpen, BarChart, Users, MapPin,
+  Megaphone
+} from "lucide-react";
 
 export default async function StudentHome() {
+  // Aapka Backend Data Fetching (Same as before)
   const user = await requireUser("student");
   const st = user.student!;
   const [att, classes, asg, notices, unread] = await Promise.all([
@@ -24,90 +29,182 @@ export default async function StudentHome() {
   const pending = asg.filter((a) => !a.submissionId).length;
   const progress = Math.round((st.semester / 8) * 100);
 
+  // Dynamic Date
+  const currentDate = new Date().toLocaleDateString('en-US', { 
+    weekday: 'long', day: 'numeric', month: 'long' 
+  });
+
   return (
-    <>
-      <AppHeader
-        greeting={greeting()}
-        name={user.fullName}
-        roleLabel="Student"
-        meta={`${st.course} • Sem ${st.semester} • Sec ${st.section}`}
-        unread={unread}
-      />
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 font-sans">
+      
+      {/* 1. Header Section */}
+      <header className="pt-10 pb-4 px-5">
+        <div className="flex justify-between items-start">
+          <div>
+            <p className="text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">
+              {currentDate}
+            </p>
+            <p className="text-slate-600 text-sm font-medium">{greeting()},</p>
+            <h1 className="text-3xl font-extrabold text-slate-900 mt-0.5 tracking-tight truncate max-w-[220px]">
+              {user.fullName} <span className="text-2xl">👋</span>
+            </h1>
+          </div>
+          
+          <div className="flex gap-3 mt-2">
+            <Link href="/student/notifications" className="relative w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-200 shadow-sm">
+              <Bell className="w-4 h-4 text-slate-600" />
+              {unread > 0 && (
+                 <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+              )}
+            </Link>
+            <Link href="/student/profile" className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center border border-purple-200 shadow-sm">
+              <span className="text-purple-700 font-bold text-sm">{user.fullName.charAt(0)}</span>
+            </Link>
+          </div>
+        </div>
 
-      <SectionTitle title="Academic Overview" />
-      <div className="grid grid-cols-2 gap-3">
-        <StatCard icon="percent" label="Attendance" value={`${att.overall}%`} sub={att.overall < 75 ? "Low" : "Good"} tone={att.overall < 75 ? "gold" : "green"} />
-        <StatCard icon="chart" label="CGPA" value={st.cgpa ?? "0.0"} sub="/ 10" tone="navy" />
-        <StatCard icon="doc" label="Pending Assignments" value={pending} sub="To submit" tone="purple" />
-        <StatCard icon="pulse" label="Semester Progress" value={`${progress}%`} sub={`Sem ${st.semester}`} tone="gold" />
-      </div>
+        {/* Tags */}
+        <div className="flex gap-2 mt-5 overflow-x-auto no-scrollbar pb-1">
+          <div className="bg-white border border-slate-200 shadow-sm px-3 py-1.5 rounded-full flex items-center gap-2 whitespace-nowrap">
+            <span className="text-purple-600 text-[11px] font-semibold tracking-wide">🎓 {st.course} • Sem {st.semester}</span>
+          </div>
+          <div className="bg-white border border-slate-200 shadow-sm px-3 py-1.5 rounded-full flex items-center gap-2 whitespace-nowrap">
+            <span className="text-slate-600 text-[11px] font-semibold tracking-wide">👨‍🎓 Sec {st.section}</span>
+          </div>
+        </div>
+      </header>
 
-      <SectionTitle title="Quick Access" />
-      <div className="grid grid-cols-4 gap-3">
-        <QuickAction href="/student/results" icon="chart" label="Result" tone="navy" />
-        <QuickAction href="/student/syllabus" icon="book" label="Syllabus" tone="purple" />
-        <QuickAction href="/student/assignments" icon="doc" label="Assignments" tone="gold" />
-        <QuickAction href="/student/attendance" icon="percent" label="Attendance" tone="green" />
-        <QuickAction href="/student/timetable" icon="clock" label="Timetable" tone="navy" />
-        <QuickAction href="/student/materials" icon="folder" label="Study Material" tone="purple" />
-        <QuickAction href="/student/doubts" icon="chat" label="Doubts" tone="rose" />
-        <QuickAction href="/student/leave" icon="calendar" label="Leave" tone="gold" />
-      </div>
+      {/* 2. Academic Overview (Connected to DB) */}
+      <section className="px-5 mt-4">
+        <h2 className="text-lg font-bold text-slate-900 mb-4">Academic Overview</h2>
+        <div className="grid grid-cols-3 gap-3">
+          {/* Attendance */}
+          <div className="bg-white rounded-[20px] p-4 flex flex-col justify-between aspect-square border border-slate-100 shadow-sm">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${att.overall < 75 ? 'bg-red-100' : 'bg-emerald-100'}`}>
+              <TrendingUp className={`w-4 h-4 ${att.overall < 75 ? 'text-red-600' : 'text-emerald-600'}`} />
+            </div>
+            <div className="mt-4">
+              <h3 className={`text-2xl font-bold tracking-tight ${att.overall < 75 ? 'text-red-600' : 'text-emerald-600'}`}>{att.overall}%</h3>
+              <p className="text-[9px] text-slate-500 font-bold tracking-wider mt-1 uppercase">Attendance</p>
+            </div>
+          </div>
 
-      <SectionTitle
-        title="Today's Classes"
-        action={
-          <Link href="/student/timetable" className="text-[12px] font-semibold text-navy">
-            View all
-          </Link>
-        }
-      />
-      {classes.length === 0 ? (
-        <EmptyState icon="clock" title="No classes today" message="Enjoy your day — no lectures are scheduled on the timetable." />
-      ) : (
-        <div className="space-y-2">
-          {classes.map((c) => (
-            <Card key={c.id} className="flex items-center gap-3">
-              <div className="w-16 shrink-0 text-center">
-                <p className="text-[13px] font-bold text-navy">{c.start}</p>
-                <p className="text-[10px] text-slate-400">{c.end}</p>
+          {/* CGPA */}
+          <div className="bg-white rounded-[20px] p-4 flex flex-col justify-between aspect-square border border-slate-100 shadow-sm">
+            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+              <Star className="text-blue-600 w-4 h-4" />
+            </div>
+            <div className="mt-4">
+              <h3 className="text-2xl font-bold text-blue-600 tracking-tight">{st.cgpa ?? "N/A"}</h3>
+              <p className="text-[9px] text-slate-500 font-bold tracking-wider mt-1 uppercase">Cur. CGPA</p>
+            </div>
+          </div>
+
+          {/* Tasks */}
+          <div className="bg-white rounded-[20px] p-4 flex flex-col justify-between aspect-square border border-slate-100 shadow-sm">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${pending > 0 ? 'bg-amber-100' : 'bg-slate-100'}`}>
+              <Zap className={`w-4 h-4 ${pending > 0 ? 'text-amber-600' : 'text-slate-500'}`} />
+            </div>
+            <div className="mt-4">
+              <h3 className={`text-2xl font-bold tracking-tight ${pending > 0 ? 'text-amber-600' : 'text-slate-600'}`}>{pending}</h3>
+              <p className="text-[9px] text-slate-500 font-bold tracking-wider mt-1 uppercase">Due Tasks</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress */}
+        <div className="bg-white rounded-2xl p-4 mt-3 border border-slate-100 shadow-sm flex items-center justify-between">
+            <span className="text-xs text-slate-500 font-semibold">Semester Progress</span>
+            <span className="text-xs text-purple-600 font-bold">{progress}%</span>
+        </div>
+      </section>
+
+      {/* 3. Quick Access (Now working with Links) */}
+      <section className="px-5 mt-8">
+        <h2 className="text-lg font-bold text-slate-900 mb-4">Quick Access</h2>
+        <div className="grid grid-cols-4 gap-3">
+          {[
+            { href: "/student/results", icon: BarChart, label: "Result", color: "text-blue-600", bg: "bg-blue-50" },
+            { href: "/student/syllabus", icon: BookOpen, label: "Syllabus", color: "text-purple-600", bg: "bg-purple-50" },
+            { href: "/student/assignments", icon: Zap, label: "Tasks", color: "text-amber-600", bg: "bg-amber-50" },
+            { href: "/student/attendance", icon: Calendar, label: "Attend.", color: "text-emerald-600", bg: "bg-emerald-50" },
+            { href: "/student/timetable", icon: Clock, label: "Timetable", color: "text-indigo-600", bg: "bg-indigo-50" },
+            { href: "/student/materials", icon: Award, label: "Material", color: "text-rose-600", bg: "bg-rose-50" },
+            { href: "/student/doubts", icon: Users, label: "Doubts", color: "text-pink-600", bg: "bg-pink-50" },
+            { href: "/student/leave", icon: MapPin, label: "Leave", color: "text-orange-600", bg: "bg-orange-50" },
+          ].map((item, index) => (
+            <Link key={index} href={item.href} className="bg-white rounded-2xl p-3 flex flex-col items-center justify-center gap-2 border border-slate-100 shadow-sm hover:bg-slate-50 active:scale-95 transition-all">
+              <div className={`w-10 h-10 rounded-full ${item.bg} flex items-center justify-center`}>
+                 <item.icon className={`w-5 h-5 ${item.color}`} />
               </div>
-              <div className="w-px self-stretch bg-slate-100" />
-              <div className="min-w-0 flex-1">
-                <p className="font-semibold text-navy text-[14px] truncate">{c.subject}</p>
-                <p className="text-[12px] text-slate-500 truncate">
-                  {c.faculty ?? "Faculty TBA"} · Room {c.room}
-                </p>
-              </div>
-              <Badge text={c.type ?? "Lecture"} tone="grey" />
-            </Card>
+              <span className="text-[10px] text-slate-600 font-medium w-full text-center truncate">{item.label}</span>
+            </Link>
           ))}
         </div>
-      )}
+      </section>
 
-      <SectionTitle
-        title="Recent Notices"
-        action={
-          <Link href="/student/notices" className="text-[12px] font-semibold text-navy">
-            View all
-          </Link>
-        }
-      />
-      {notices.length === 0 ? (
-        <EmptyState icon="megaphone" title="No notices yet" message="College announcements will appear here." />
-      ) : (
-        <div className="space-y-2">
-          {notices.slice(0, 4).map((n) => (
-            <Card key={n.id}>
-              <div className="flex items-center justify-between gap-2">
-                <p className="font-semibold text-navy text-[14px]">{n.title}</p>
-                <Badge text={n.category} tone={n.priority === "Urgent" ? "red" : "gold"} />
-              </div>
-              <p className="text-[12px] text-slate-500 mt-1 line-clamp-2">{n.message}</p>
-            </Card>
-          ))}
+      {/* 4. Today's Classes (Dynamic) */}
+      <section className="px-5 mt-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold text-slate-900">Today's Classes</h2>
+          <Link href="/student/timetable" className="text-sm text-purple-600 font-semibold">View all &gt;</Link>
         </div>
-      )}
-    </>
+
+        <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-sm flex flex-col gap-6">
+          {classes.length === 0 ? (
+            <div className="text-center py-6">
+              <Clock className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+              <p className="text-sm font-semibold text-slate-600">No classes today</p>
+              <p className="text-[10px] text-slate-400 mt-1">Enjoy your day!</p>
+            </div>
+          ) : (
+            classes.map((c, i) => (
+              <div key={c.id} className="flex gap-4 items-start">
+                <div className="w-12 text-right shrink-0">
+                  <p className="text-sm font-bold text-slate-900">{c.start}</p>
+                  <p className="text-[10px] text-slate-500 font-medium">{c.end}</p>
+                </div>
+                <div className={`w-1 rounded-full h-10 mt-1 shrink-0 ${i % 2 === 0 ? 'bg-indigo-500' : 'bg-amber-500'}`} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-slate-800 truncate">{c.subject}</p>
+                  <p className="text-[10px] text-slate-500 mt-1 flex items-center gap-1 font-medium truncate">
+                     <MapPin className="w-3 h-3 shrink-0" /> {c.room} • {c.faculty ?? "TBA"}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* 5. Recent Notices (Dynamic) */}
+      <section className="px-5 mt-8 mb-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold text-slate-900">Recent Notices</h2>
+          <Link href="/student/notices" className="text-sm text-purple-600 font-semibold">View all &gt;</Link>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {notices.length === 0 ? (
+            <div className="bg-white rounded-[24px] p-6 border border-slate-100 shadow-sm text-center">
+              <Megaphone className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+              <p className="text-sm font-semibold text-slate-600">No notices yet</p>
+            </div>
+          ) : (
+            notices.slice(0, 3).map((n) => (
+              <Link href={`/student/notices/${n.id}`} key={n.id} className="bg-white rounded-[20px] p-4 border border-slate-100 shadow-sm block hover:bg-slate-50 transition-colors">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <h3 className="font-semibold text-slate-800 text-[14px] truncate">{n.title}</h3>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${n.priority === 'Urgent' ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600'}`}>
+                    {n.category}
+                  </span>
+                </div>
+                <p className="text-[12px] text-slate-500 line-clamp-2">{n.message}</p>
+              </Link>
+            ))
+          )}
+        </div>
+      </section>
+    </div>
   );
 }

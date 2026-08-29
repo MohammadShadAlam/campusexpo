@@ -3,7 +3,6 @@ import { requireUser } from "@/lib/auth";
 import { weeklyTimetable } from "@/lib/queries";
 import { ArrowLeft, Clock, MapPin, User, CalendarX } from "lucide-react";
 
-// Ye line Next.js ko batati hai ki page ko cache na kare aur humesha click par fresh data de
 export const dynamic = "force-dynamic";
 
 const DAYS = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -12,15 +11,20 @@ const SHORT_DAYS = ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export default async function StudentTimetable({
   searchParams,
 }: {
-  searchParams?: { day?: string };
+  searchParams?: any;
 }) {
   const user = await requireUser("student");
   const st = user.student!;
   const rows = await weeklyTimetable(st.semester, st.section);
   
+  // NEXT.JS FIX: Naye version ke hisaab se params ko 'await' karna zaroori hai
+  const resolvedParams = await searchParams;
+  const dayParam = resolvedParams?.day;
+  
   const today = new Date().getDay() === 0 ? 1 : new Date().getDay();
   
-  const activeDay = searchParams?.day ? parseInt(searchParams.day) : today;
+  // Ab ye URL se click kiya hua din perfectly catch kar lega
+  const activeDay = dayParam ? parseInt(dayParam) : today;
   const items = rows.filter((r) => r.day === activeDay);
 
   return (
@@ -51,7 +55,7 @@ export default async function StudentTimetable({
         </div>
       ) : (
         <>
-          {/* 2. Days Selector (Fixed Click Issue) */}
+          {/* 2. Days Selector (Fixed Fast Clicks) */}
           <div className="px-2.5 mb-5 sticky top-0 bg-slate-50/95 backdrop-blur-md py-3 z-10 border-b border-slate-200/50">
             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
               {[1, 2, 3, 4, 5, 6].map((d) => {
@@ -61,10 +65,10 @@ export default async function StudentTimetable({
                 const isActive = d === activeDay;
 
                 return (
-                  // Link tag ko hata kar <a> tag use kiya taaki click humesha kaam kare
-                  <a 
+                  <Link 
                     key={d} 
-                    href={`/student/timetable?day=${d}`}
+                    href={`?day=${d}`}
+                    scroll={false} // Smooth transition bina upar jump kiye
                     className={`px-4 py-1.5 rounded-full text-[12px] font-bold shrink-0 transition-colors ${
                       isActive
                         ? 'bg-purple-600 text-white shadow-md' 
@@ -72,13 +76,13 @@ export default async function StudentTimetable({
                     }`}
                   >
                     {SHORT_DAYS[d]}
-                  </a>
+                  </Link>
                 );
               })}
             </div>
           </div>
 
-          {/* 3. Timetable List (Slim Cards) */}
+          {/* 3. Timetable List (Slim Cards Maintained) */}
           <div className="px-2.5">
             <div className="flex justify-between items-center mb-3.5 px-1">
               <h2 className="text-[15px] font-bold text-slate-900">{DAYS[activeDay]}'s Classes</h2>

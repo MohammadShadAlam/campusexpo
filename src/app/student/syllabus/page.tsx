@@ -21,8 +21,8 @@ export default async function SyllabusPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 font-sans">
       
-      {/* 1. Header Section */}
-      <header className="pt-10 pb-4 px-2.5">
+      {/* 1. Header Section (Top spacing fixed: pt-4 instead of pt-10) */}
+      <header className="pt-4 pb-3 px-2.5">
         <div className="flex items-center gap-3.5">
           <Link href="/student" className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-200 shadow-sm active:scale-95 transition-transform shrink-0">
             <ArrowLeft className="w-5 h-5 text-slate-600" />
@@ -73,7 +73,7 @@ export default async function SyllabusPage() {
                     </div>
                   </div>
 
-                  {/* Units List (Duplicate Unit badge removed completely) */}
+                  {/* Units List */}
                   <div className="flex flex-col gap-2.5">
                     {units.map((u) => (
                       <div key={u.id} className="bg-white rounded-[20px] p-4 border border-slate-100 shadow-sm flex flex-col gap-1.5">

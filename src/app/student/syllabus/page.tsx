@@ -24,7 +24,7 @@ export default async function SyllabusPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-32 font-sans flex flex-col w-full">
       
       {/* Header - Edge to Edge */}
-      <header className="pt-4 pb-3 px-3 bg-white border-b border-slate-100 sticky top-0 z-20 w-full">
+      <header className="pt-4 pb-3 px-4 bg-white border-b border-slate-100 sticky top-0 z-20 w-full shadow-sm">
         <div className="flex items-center gap-3 w-full">
           <Link href="/student" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-200 shadow-sm active:scale-95 transition-transform shrink-0">
             <ArrowLeft className="w-5 h-5 text-slate-600" />

@@ -53,10 +53,11 @@ export default async function StudentTimetable({
           </div>
         </div>
       ) : (
-        <div className="flex-1 w-full flex flex-col">
-          {/* 2. Days Selector (Tabs) */}
-          <div className="px-3 mb-2 sticky top-[57px] bg-slate-50/95 backdrop-blur-md py-2.5 z-10 border-b border-slate-200/50 w-full">
-            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 w-full">
+        <div className="flex-1 w-full flex flex-col mt-3">
+          
+          {/* 2. Days Selector Capsule Container (No Scrollbar/Slider, exactly like reference image 2) */}
+          <div className="px-3 mb-3 w-full">
+            <div className="bg-slate-200/70 p-1.5 rounded-[22px] flex items-center justify-between gap-1 w-full shadow-inner">
               {[1, 2, 3, 4, 5, 6].map((d) => {
                 const hasClasses = rows.some((r) => r.day === d);
                 if (!hasClasses) return null;
@@ -68,10 +69,10 @@ export default async function StudentTimetable({
                     key={d} 
                     href={`?day=${d}`}
                     scroll={false}
-                    className={`px-4 py-1.5 rounded-full text-[12px] font-bold shrink-0 transition-colors ${
+                    className={`flex-1 py-2 rounded-2xl text-[12px] font-extrabold text-center transition-all ${
                       isActive
-                        ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20' 
-                        : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                        ? 'bg-purple-600 text-white shadow-md shadow-purple-500/25' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-300/50'
                     }`}
                   >
                     {SHORT_DAYS[d]}
@@ -82,7 +83,7 @@ export default async function StudentTimetable({
           </div>
 
           {/* 3. Timetable List */}
-          <div className="px-3 py-4 w-full flex flex-col gap-3">
+          <div className="px-3 py-2 w-full flex flex-col gap-3">
             <div className="flex justify-between items-center px-0.5">
               <h2 className="text-[15px] font-extrabold text-slate-900">{DAYS[activeDay]}'s Classes</h2>
               {activeDay === today && (

@@ -5,7 +5,7 @@ import { logoutAction } from "@/lib/actions";
 import { 
   ArrowLeft, Edit3, Award, Star, ShieldCheck, 
   BookOpen, Mail, Phone, MapPin, CheckCircle2, 
-  LogOut, IdCard, Calendar, Bell, FileText 
+  LogOut, IdCard, Calendar 
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +16,7 @@ export default async function StudentProfile() {
   const subs = await semesterSubjects(st.semester, st.section);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-32 font-sans flex flex-col w-full">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-32 font-sans flex flex-col -mx-3 sm:-mx-6 -mt-4">
       
       {/* 1. Header Section */}
       <header className="pt-4 pb-3 px-3 bg-white border-b border-slate-100 sticky top-0 z-20 w-full shadow-sm">
@@ -38,9 +38,8 @@ export default async function StudentProfile() {
       {/* Main Content Container */}
       <div className="flex-1 px-3 py-4 w-full flex flex-col gap-6">
 
-        {/* 2. Top Identity Card (Similar to Reference Image 1) */}
+        {/* 2. Top Identity Card */}
         <div className="bg-white rounded-[24px] p-5 border border-slate-200/80 shadow-sm relative overflow-hidden w-full">
-          {/* Top Brand Tag inside Card */}
           <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-4">
             <div>
               <p className="font-extrabold text-slate-900 text-base">CampusExpo</p>
@@ -119,13 +118,19 @@ export default async function StudentProfile() {
           </div>
         </div>
 
-        {/* 4. Academic Profile Details */}
+        {/* 4. Academic Profile Details (Department overlap fixed) */}
         <div className="w-full flex flex-col gap-2.5">
           <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider px-1">Academic Profile</p>
           <div className="bg-white rounded-[22px] p-4 border border-slate-200/80 shadow-sm flex flex-col divide-y divide-slate-100">
             <div className="flex justify-between py-2.5"><span className="text-[12px] text-slate-500">Roll Number</span><span className="text-[13px] font-bold text-slate-900">{st.rollNumber}</span></div>
             <div className="flex justify-between py-2.5"><span className="text-[12px] text-slate-500">Enrollment</span><span className="text-[13px] font-bold text-slate-900">{st.enrollmentNumber}</span></div>
-            <div className="flex justify-between py-2.5"><span className="text-[12px] text-slate-500">Department</span><span className="text-[13px] font-bold text-slate-900">{user.department}</span></div>
+            
+            {/* Department row layout fixed */}
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center py-2.5 gap-1">
+              <span className="text-[12px] text-slate-500">Department</span>
+              <span className="text-[13px] font-bold text-slate-900 sm:text-right">{user.department}</span>
+            </div>
+
             <div className="flex justify-between py-2.5"><span className="text-[12px] text-slate-500">Year / Semester</span><span className="text-[13px] font-bold text-slate-900">{st.year} • Sem {st.semester}</span></div>
             <div className="flex justify-between py-2.5"><span className="text-[12px] text-slate-500">Section</span><span className="text-[13px] font-bold text-slate-900">{st.section}</span></div>
             <div className="flex justify-between py-2.5"><span className="text-[12px] text-slate-500">Batch Group</span><span className="text-[13px] font-bold text-slate-900">{st.batch}</span></div>

@@ -21,11 +21,11 @@ export default async function SyllabusPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-32 font-sans flex flex-col -mx-3 sm:-mx-6 -mt-4 w-full">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-32 font-sans flex flex-col w-full">
       
-      {/* 1. Header Section - Sticky & Edge-to-Edge like Community */}
-      <header className="pt-4 pb-3 px-4 bg-white border-b border-slate-100 sticky top-0 z-20 w-full shadow-sm">
-        <div className="flex items-center gap-3.5 w-full">
+      {/* 1. Header Section - Clean & Sticky */}
+      <header className="pt-4 pb-3 px-3 bg-white border-b border-slate-100 sticky top-0 z-20 w-full shadow-sm">
+        <div className="flex items-center gap-3 w-full">
           <Link href="/student" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-200 shadow-sm active:scale-95 transition-transform shrink-0">
             <ArrowLeft className="w-5 h-5 text-slate-600" />
           </Link>
@@ -40,63 +40,59 @@ export default async function SyllabusPage() {
         </div>
       </header>
 
-      {/* 2. Content Section */}
-      <div className="flex-1 px-3 py-4 w-full">
+      {/* 2. Content Section - Balanced Padding */}
+      <div className="flex-1 px-3 py-4 w-full flex flex-col gap-6">
         {rows.length === 0 ? (
-          <div className="bg-white rounded-[20px] p-8 border border-slate-100 shadow-sm text-center my-auto mx-1">
+          <div className="bg-white rounded-[20px] p-8 border border-slate-100 shadow-sm text-center my-auto">
             <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-3" />
             <h2 className="text-base font-bold text-slate-800">No syllabus uploaded</h2>
             <p className="text-xs text-slate-500 mt-1">The syllabus for your semester has not been published yet.</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-6 w-full">
-            {subjectNames.map((name, index) => {
-              const units = rows.filter((r) => r.subject === name);
-              const sampleUnit = units[0];
-              const subjectCode = (sampleUnit as any)?.code || (sampleUnit as any)?.subjectCode || "";
+          subjectNames.map((name, index) => {
+            const units = rows.filter((r) => r.subject === name);
+            const sampleUnit = units[0];
+            const subjectCode = (sampleUnit as any)?.code || (sampleUnit as any)?.subjectCode || "";
 
-              const theme = iconsList[index % iconsList.length];
-              const CurrentIcon = theme.icon;
+            const theme = iconsList[index % iconsList.length];
+            const CurrentIcon = theme.icon;
 
-              return (
-                <div key={name} className="w-full">
-                  {/* Subject Title & Unique Icon Header */}
-                  <div className="mb-3 px-1">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-[15px] font-extrabold text-slate-900 flex items-center gap-2">
-                        <span className={`w-7 h-7 rounded-lg ${theme.bg} flex items-center justify-center shrink-0`}>
-                          <CurrentIcon className={`w-4 h-4 ${theme.text}`} />
-                        </span>
-                        {name}
-                      </h2>
-                      {subjectCode && (
-                        <span className="text-[11px] font-bold text-slate-600 bg-white px-2.5 py-1 rounded-full border border-slate-200 shadow-xs flex items-center gap-1">
-                          <Hash className="w-3 h-3 text-slate-400" /> {subjectCode}
-                        </span>
+            return (
+              <div key={name} className="w-full flex flex-col gap-2.5">
+                {/* Subject Title & Unique Icon Header */}
+                <div className="px-1 flex items-center justify-between">
+                  <h2 className="text-[15px] font-extrabold text-slate-900 flex items-center gap-2">
+                    <span className={`w-7 h-7 rounded-lg ${theme.bg} flex items-center justify-center shrink-0`}>
+                      <CurrentIcon className={`w-4 h-4 ${theme.text}`} />
+                    </span>
+                    {name}
+                  </h2>
+                  {subjectCode && (
+                    <span className="text-[11px] font-bold text-slate-600 bg-white px-2.5 py-1 rounded-full border border-slate-200 shadow-xs flex items-center gap-1">
+                      <Hash className="w-3 h-3 text-slate-400" /> {subjectCode}
+                    </span>
+                  )}
+                </div>
+
+                {/* Units List Cards */}
+                <div className="flex flex-col gap-2 w-full">
+                  {units.map((u) => (
+                    <div key={u.id} className="bg-white rounded-[18px] p-4 border border-slate-100 shadow-sm flex flex-col gap-1.5 w-full">
+                      <p className="font-bold text-slate-900 text-[14px]">
+                        {u.title}
+                      </p>
+
+                      {u.topics && (
+                        <p className="text-[12px] text-slate-500 leading-relaxed mt-0.5 bg-slate-50 p-2.5 rounded-xl border border-slate-100/70">
+                          {u.topics}
+                        </p>
                       )}
                     </div>
-                  </div>
-
-                  {/* Units List */}
-                  <div className="flex flex-col gap-2.5 w-full">
-                    {units.map((u) => (
-                      <div key={u.id} className="bg-white rounded-[18px] p-4 border border-slate-100 shadow-sm flex flex-col gap-1.5 w-full">
-                        <p className="font-bold text-slate-900 text-[14px]">
-                          {u.title}
-                        </p>
-
-                        {u.topics && (
-                          <p className="text-[12px] text-slate-500 leading-relaxed mt-0.5 bg-slate-50 p-2.5 rounded-xl border border-slate-100/70">
-                            {u.topics}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                  ))}
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })
         )}
       </div>
 

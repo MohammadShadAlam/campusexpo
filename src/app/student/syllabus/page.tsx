@@ -23,7 +23,7 @@ export default async function SyllabusPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-32 font-sans flex flex-col w-full">
       
-      {/* Header - Exactly like Community Page */}
+      {/* Header - Edge to Edge */}
       <header className="pt-4 pb-3 px-3 bg-white border-b border-slate-100 sticky top-0 z-20 w-full">
         <div className="flex items-center gap-3 w-full">
           <Link href="/student" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-200 shadow-sm active:scale-95 transition-transform shrink-0">
@@ -40,7 +40,7 @@ export default async function SyllabusPage() {
         </div>
       </header>
 
-      {/* Content Section - Exactly like Community Page Spacing */}
+      {/* Content Section */}
       <div className="flex-1 px-3 py-4 w-full flex flex-col gap-6">
         {rows.length === 0 ? (
           <div className="bg-white rounded-[24px] p-8 border border-slate-100 shadow-sm text-center my-auto">
@@ -59,7 +59,7 @@ export default async function SyllabusPage() {
 
             return (
               <div key={name} className="w-full flex flex-col gap-3">
-                {/* Subject Title & Unique Icon Header */}
+                {/* Subject Title Header */}
                 <div className="px-1 flex items-center justify-between">
                   <h2 className="text-[16px] font-extrabold text-slate-900 flex items-center gap-2">
                     <span className={`w-7 h-7 rounded-lg ${theme.bg} flex items-center justify-center shrink-0`}>
@@ -74,7 +74,7 @@ export default async function SyllabusPage() {
                   )}
                 </div>
 
-                {/* Units List Cards */}
+                {/* Units Cards */}
                 <div className="flex flex-col gap-2.5 w-full">
                   {units.map((u) => (
                     <div key={u.id} className="bg-white rounded-[20px] p-4 border border-slate-100 shadow-sm flex flex-col gap-1.5 w-full">

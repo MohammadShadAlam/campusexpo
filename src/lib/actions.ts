@@ -511,3 +511,16 @@ export async function sendCommunityMessageAction(formData: FormData) {
 
   revalidatePath("/student/community");
 }
+export async function updateStudentProfile(formData: FormData) {
+  const user = await requireUser("student");
+  const phone = s(formData, "phone");
+
+  await db
+    .update(users)
+    .set({ phone })
+    .where(eq(users.id, user.id));
+
+  await logActivity(user.id, user.fullName, "updated profile details");
+  revalidatePath("/student/profile");
+  redirect("/student/profile");
+}

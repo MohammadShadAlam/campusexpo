@@ -15,8 +15,8 @@ export default async function CommunityPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-32 font-sans flex flex-col">
       
       {/* Header */}
-      <header className="pt-4 pb-3 px-2.5 bg-white border-b border-slate-100 sticky top-0 z-20">
-        <div className="flex items-center gap-3.5">
+      <header className="pt-4 pb-3 px-3 bg-white border-b border-slate-100 sticky top-0 z-20">
+        <div className="flex items-center gap-3">
           <Link href="/student" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-200 shadow-sm active:scale-95 transition-transform shrink-0">
             <ArrowLeft className="w-5 h-5 text-slate-600" />
           </Link>
@@ -31,8 +31,8 @@ export default async function CommunityPage() {
         </div>
       </header>
 
-      {/* Messages List */}
-      <div className="flex-1 px-2.5 py-4 max-w-2xl mx-auto w-full flex flex-col gap-3">
+      {/* Messages List - Fixed side padding & width for mobile */}
+      <div className="flex-1 px-3 py-4 w-full md:max-w-2xl md:mx-auto flex flex-col gap-3">
         {messages.length === 0 ? (
           <div className="bg-white rounded-[24px] p-8 border border-slate-100 shadow-sm text-center my-auto">
             <MessageSquare className="w-12 h-12 text-slate-300 mx-auto mb-3" />
@@ -65,8 +65,8 @@ export default async function CommunityPage() {
         )}
       </div>
 
-      {/* Message Input Bar */}
-      <div className="fixed bottom-16 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-2.5 z-30 max-w-2xl mx-auto md:rounded-t-2xl">
+      {/* Message Input Bar - Full width on mobile */}
+      <div className="fixed bottom-16 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 z-30 w-full md:max-w-2xl md:mx-auto md:rounded-t-2xl">
         <form action={sendCommunityMessageAction} className="flex gap-2 items-center">
           <input 
             type="text" 

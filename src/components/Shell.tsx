@@ -31,9 +31,10 @@ const NAV: Record<string, Item[]> = {
 export function BottomNav({ role }: { role: string }) {
   const pathname = usePathname();
   const items = NAV[role] ?? NAV.student;
+
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-slate-200 md:max-w-2xl md:mx-auto md:rounded-t-2xl">
-      <div className="flex w-full">
+    <div className="fixed bottom-4 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
+      <nav className="pointer-events-auto bg-white/95 backdrop-blur-md border border-slate-200/80 shadow-xl shadow-slate-200/50 rounded-full px-3 py-2 flex items-center justify-around gap-2 max-w-sm w-full">
         {items.map((it) => {
           const active =
             pathname === it.href || (it.href !== `/${role}` && pathname.startsWith(it.href));
@@ -41,19 +42,16 @@ export function BottomNav({ role }: { role: string }) {
             <Link
               key={it.href}
               href={it.href}
-              className={`flex-1 flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold ${
-                active ? "text-navy" : "text-slate-400"
+              className={`flex-1 flex flex-col items-center gap-1 py-1.5 px-2 rounded-full transition-all ${
+                active ? "text-purple-600 bg-purple-50" : "text-slate-400 hover:text-slate-600"
               }`}
             >
-              <Icon name={it.icon} className="w-[19px] h-[19px]" />
-              {it.label}
-              <span
-                className={`h-[3px] w-6 rounded-full ${active ? "bg-gold" : "bg-transparent"}`}
-              />
+              <Icon name={it.icon} className="w-[18px] h-[18px]" />
+              <span className="text-[9px] font-bold tracking-tight">{it.label}</span>
             </Link>
           );
         })}
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }

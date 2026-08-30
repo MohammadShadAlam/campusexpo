@@ -31,6 +31,12 @@ const NAV: Record<string, Item[]> = {
 
 export function BottomNav({ role }: { role: string }) {
   const pathname = usePathname();
+
+  // Agar user community page par hai, toh navbar render hi nahi hoga
+  if (pathname === "/student/community") {
+    return null;
+  }
+
   const items = NAV[role] ?? NAV.student;
   const [isVisible, setIsVisible] = useState(true);
 
@@ -40,18 +46,15 @@ export function BottomNav({ role }: { role: string }) {
     const handleActivity = () => {
       setIsVisible(true);
       clearTimeout(timer);
-      // Agar 3 second tak koi touch ya scroll nahi hua toh navbar niche chup jayega
       timer = setTimeout(() => {
         setIsVisible(false);
       }, 3000);
     };
 
-    // Scroll aur Touch events ko listen karna
     window.addEventListener("scroll", handleActivity, { passive: true });
     window.addEventListener("touchstart", handleActivity, { passive: true });
     window.addEventListener("mousemove", handleActivity, { passive: true });
 
-    // Initial timer start
     timer = setTimeout(() => {
       setIsVisible(false);
     }, 3000);

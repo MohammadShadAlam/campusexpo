@@ -31,7 +31,7 @@ export default async function CommunityPage() {
         </div>
       </header>
 
-      {/* Messages List - Made chat bubbles smaller & compact */}
+      {/* Messages List */}
       <div className="flex-1 px-3 py-4 w-full flex flex-col gap-2.5">
         {messages.length === 0 ? (
           <div className="bg-white rounded-[20px] p-8 border border-slate-100 shadow-sm text-center my-auto w-full">
@@ -65,19 +65,19 @@ export default async function CommunityPage() {
         )}
       </div>
 
-      {/* Message Input Bar - Positioned properly above the bottom navigation */}
-      <div className="fixed bottom-[72px] inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 z-30 w-full shadow-lg">
+      {/* Message Input Bar - Fixed at the very bottom since navbar is hidden here */}
+      <div className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2.5 z-30 w-full shadow-lg">
         <form action={sendCommunityMessageAction} className="flex gap-2 items-center w-full max-w-2xl mx-auto">
           <input 
             type="text" 
             name="message" 
             placeholder="Type a message to your batch..." 
-            className="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2 text-[12px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
+            className="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2.5 text-[12px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
             required
             autoComplete="off"
           />
-          <button type="submit" className="w-9 h-9 rounded-full bg-purple-600 hover:bg-purple-700 active:scale-95 text-white flex items-center justify-center shadow-md shadow-purple-500/25 transition-all shrink-0">
-            <Send className="w-3.5 h-3.5" />
+          <button type="submit" className="w-10 h-10 rounded-full bg-purple-600 hover:bg-purple-700 active:scale-95 text-white flex items-center justify-center shadow-md shadow-purple-500/25 transition-all shrink-0">
+            <Send className="w-4 h-4" />
           </button>
         </form>
       </div>

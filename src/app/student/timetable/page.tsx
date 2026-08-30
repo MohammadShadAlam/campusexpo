@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { weeklyTimetable } from "@/lib/queries";
-import { ArrowLeft, Clock, MapPin, User, CalendarX } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, User, CalendarX, Calendar } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -25,17 +25,19 @@ export default async function StudentTimetable({
   const items = rows.filter((r) => r.day === activeDay);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-32 font-sans flex flex-col -mx-3 sm:-mx-6 -mt-4">
       
-      {/* 1. Header Section (Top spacing fixed: pt-4 instead of pt-10) */}
-      <header className="pt-4 pb-3 px-2.5">
-        <div className="flex items-center gap-3.5">
-          <Link href="/student" className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-200 shadow-sm active:scale-95 transition-transform shrink-0">
+      {/* 1. Header Section - Clean & Sticky */}
+      <header className="pt-4 pb-3 px-3 bg-white border-b border-slate-100 sticky top-0 z-20 w-full shadow-sm">
+        <div className="flex items-center gap-3 w-full">
+          <Link href="/student" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-200 shadow-sm active:scale-95 transition-transform shrink-0">
             <ArrowLeft className="w-5 h-5 text-slate-600" />
           </Link>
-          <div>
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Timetable</h1>
-            <p className="text-[13px] text-slate-500 font-medium mt-0.5">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-purple-600" /> Timetable
+            </h1>
+            <p className="text-[12px] text-slate-500 font-medium truncate">
               Semester {st.semester} • Section {st.section}
             </p>
           </div>
@@ -43,18 +45,18 @@ export default async function StudentTimetable({
       </header>
 
       {rows.length === 0 ? (
-        <div className="px-2.5 mt-10">
-          <div className="bg-white rounded-[24px] p-8 border border-slate-100 shadow-sm text-center">
-            <CalendarX className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <h2 className="text-lg font-bold text-slate-800">No timetable published</h2>
-            <p className="text-sm text-slate-500 mt-2">The administrator has not published the timetable for your class yet.</p>
+        <div className="px-3 mt-10 w-full">
+          <div className="bg-white rounded-[22px] p-8 border border-slate-100 shadow-sm text-center">
+            <CalendarX className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+            <h2 className="text-base font-bold text-slate-800">No timetable published</h2>
+            <p className="text-xs text-slate-500 mt-1">The administrator has not published the timetable for your class yet.</p>
           </div>
         </div>
       ) : (
-        <>
+        <div className="flex-1 w-full flex flex-col">
           {/* 2. Days Selector (Tabs) */}
-          <div className="px-2.5 mb-5 sticky top-0 bg-slate-50/95 backdrop-blur-md py-3 z-10 border-b border-slate-200/50">
-            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+          <div className="px-3 mb-2 sticky top-[57px] bg-slate-50/95 backdrop-blur-md py-2.5 z-10 border-b border-slate-200/50 w-full">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 w-full">
               {[1, 2, 3, 4, 5, 6].map((d) => {
                 const hasClasses = rows.some((r) => r.day === d);
                 if (!hasClasses) return null;
@@ -68,7 +70,7 @@ export default async function StudentTimetable({
                     scroll={false}
                     className={`px-4 py-1.5 rounded-full text-[12px] font-bold shrink-0 transition-colors ${
                       isActive
-                        ? 'bg-purple-600 text-white shadow-md' 
+                        ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20' 
                         : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                     }`}
                   >
@@ -80,56 +82,56 @@ export default async function StudentTimetable({
           </div>
 
           {/* 3. Timetable List */}
-          <div className="px-2.5">
-            <div className="flex justify-between items-center mb-3.5 px-1">
-              <h2 className="text-[15px] font-bold text-slate-900">{DAYS[activeDay]}'s Classes</h2>
+          <div className="px-3 py-4 w-full flex flex-col gap-3">
+            <div className="flex justify-between items-center px-0.5">
+              <h2 className="text-[15px] font-extrabold text-slate-900">{DAYS[activeDay]}'s Classes</h2>
               {activeDay === today && (
-                <span className="text-[9px] bg-amber-100 text-amber-700 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                <span className="text-[10px] bg-amber-50 text-amber-700 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wide border border-amber-100">
                   Today
                 </span>
               )}
             </div>
             
             {items.length === 0 ? (
-               <div className="text-center py-10 bg-white rounded-[16px] border border-slate-100 shadow-sm">
-                 <p className="text-sm font-medium text-slate-500">No classes scheduled for {DAYS[activeDay]}</p>
+               <div className="text-center py-10 bg-white rounded-[20px] border border-slate-100 shadow-sm w-full">
+                 <p className="text-xs font-medium text-slate-500">No classes scheduled for {DAYS[activeDay]}</p>
                </div>
             ) : (
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-2.5 w-full">
                 {items.map((c, index) => {
                   const colors = ["bg-indigo-500", "bg-amber-500", "bg-emerald-500", "bg-rose-500", "bg-blue-500"];
                   const barColor = colors[index % colors.length];
                   
                   const isSpecial = c.type?.toLowerCase() === "lab" || c.type?.toLowerCase() === "special";
-                  const badgeBg = isSpecial ? "bg-amber-100 text-amber-700" : "bg-indigo-100 text-indigo-700";
+                  const badgeBg = isSpecial ? "bg-amber-50 text-amber-700 border border-amber-100" : "bg-purple-50 text-purple-700 border border-purple-100";
 
                   return (
-                    <div key={c.id} className="bg-white rounded-[16px] p-3 border border-slate-100 shadow-sm flex gap-3 relative overflow-hidden">
-                      <div className={`absolute left-0 top-3 bottom-3 w-1 rounded-r-full ${barColor}`} />
+                    <div key={c.id} className="bg-white rounded-[18px] p-4 border border-slate-100 shadow-sm flex gap-3 relative overflow-hidden w-full">
+                      <div className={`absolute left-0 top-3 bottom-3 w-1.5 rounded-r-full ${barColor}`} />
 
-                      <div className="flex-1 ml-1.5">
-                        <div className="flex justify-between items-center mb-1">
+                      <div className="flex-1 ml-1.5 w-full min-w-0">
+                        <div className="flex justify-between items-center mb-1.5 w-full">
                           <p className="text-[12px] font-bold text-slate-700 flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-slate-400" /> 
+                            <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" /> 
                             {c.start} - {c.end}
                           </p>
-                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${badgeBg}`}>
+                          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full shrink-0 ${badgeBg}`}>
                             {c.type ?? "Theory"}
                           </span>
                         </div>
 
-                        <p className="text-[14px] font-bold text-slate-900 mb-1.5 leading-tight truncate">
+                        <p className="text-[14px] font-extrabold text-slate-900 mb-2 leading-tight truncate">
                           {c.subject}
                         </p>
 
-                        <div className="flex items-center gap-4 text-[11px] font-medium text-slate-500">
-                          <span className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-4 text-[11px] font-medium text-slate-500 w-full min-w-0">
+                          <span className="flex items-center gap-1.5 shrink-0">
                             <MapPin className="w-3.5 h-3.5 text-slate-400"/> 
                             {c.room}
                           </span>
-                          <span className="flex items-center gap-1.5 truncate">
-                            <User className="w-3.5 h-3.5 text-slate-400"/> 
-                            {c.faculty ?? "Faculty TBA"}
+                          <span className="flex items-center gap-1.5 truncate min-w-0">
+                            <User className="w-3.5 h-3.5 text-slate-400 shrink-0"/> 
+                            <span className="truncate">{c.faculty ?? "Faculty TBA"}</span>
                           </span>
                         </div>
                       </div>
@@ -139,7 +141,7 @@ export default async function StudentTimetable({
               </div>
             )}
           </div>
-        </>
+        </div>
       )}
     </div>
   );

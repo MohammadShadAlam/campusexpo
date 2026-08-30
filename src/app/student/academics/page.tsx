@@ -13,7 +13,7 @@ export default async function AcademicsPage() {
   const subs = await semesterSubjects(st.semester, st.section);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 font-sans">
+   <div className="min-h-screen bg-slate-50 text-slate-900 pb-32 font-sans flex flex-col -mx-3 sm:-mx-6 -mt-4">
       
       {/* 1. Header Section */}
       <header className="pt-10 pb-4 px-2.5">

@@ -127,7 +127,7 @@ export default async function StudentHome() {
             { href: "/student/academics", icon: GraduationCap, label: "Academics", color: "text-indigo-600", bg: "bg-indigo-50" }, // Timetable ki jagah Academics
             { href: "/student/materials", icon: Award, label: "Material", color: "text-rose-600", bg: "bg-rose-50" },
             { href: "/student/doubts", icon: Users, label: "Doubts", color: "text-pink-600", bg: "bg-pink-50" },
-            { href: "/student/leave", icon: MapPin, label: "Leave", color: "text-orange-600", bg: "bg-orange-50" },
+            { href: "/student/community", icon: Users, label: "Community", color: "text-orange-600", bg: "bg-orange-50" },
           ].map((item, index) => (
             <Link key={index} href={item.href} className="bg-white rounded-[18px] p-2.5 flex flex-col items-center justify-center gap-2 border border-slate-100 shadow-sm active:scale-95 transition-all">
               <div className={`w-10 h-10 rounded-full ${item.bg} flex items-center justify-center`}>

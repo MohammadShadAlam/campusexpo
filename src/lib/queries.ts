@@ -14,8 +14,9 @@ import {
   syllabusUnits,
   students,
   users,
+  communityMessages,
 } from "@/db/schema";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql, asc } from "drizzle-orm";
 
 export function greeting() {
   const h = new Date().getHours();
@@ -243,4 +244,22 @@ export async function classStudents(semester: number, section: string) {
       ),
     )
     .orderBy(students.rollNumber);
+}
+
+// Community Messages Query
+export async function getCommunityMessages(semester: number, section: string) {
+  return await db
+    .select({
+      id: communityMessages.id,
+      semester: communityMessages.semester,
+      section: communityMessages.section,
+      userId: communityMessages.userId,
+      message: communityMessages.message,
+      createdAt: communityMessages.createdAt,
+      userName: users.fullName,
+    })
+    .from(communityMessages)
+    .innerJoin(users, eq(communityMessages.userId, users.id))
+    .where(and(eq(communityMessages.semester, semester), eq(communityMessages.section, section)))
+    .orderBy(asc(communityMessages.createdAt));
 }

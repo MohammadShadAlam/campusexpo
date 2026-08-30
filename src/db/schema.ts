@@ -227,3 +227,12 @@ export const sessions = pgTable("sessions", {
   userId: integer("user_id").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const communityMessages = pgTable("community_messages", {
+  id: serial("id").primaryKey(),
+  semester: integer("semester").notNull(),
+  section: text("section").notNull(),
+  userId: integer("user_id").notNull(),
+  message: text("message").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});

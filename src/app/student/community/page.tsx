@@ -12,7 +12,7 @@ export default async function CommunityPage() {
   const messages = await getCommunityMessages(st.semester, st.section);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-32 font-sans flex flex-col -mx-3 sm:-mx-6 -mt-4">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-36 font-sans flex flex-col w-full">
       
       {/* Header */}
       <header className="pt-4 pb-3 px-3 bg-white border-b border-slate-100 sticky top-0 z-20 w-full shadow-sm">
@@ -31,7 +31,7 @@ export default async function CommunityPage() {
         </div>
       </header>
 
-      {/* Messages List */}
+      {/* Messages List - Made chat bubbles smaller & compact */}
       <div className="flex-1 px-3 py-4 w-full flex flex-col gap-2.5">
         {messages.length === 0 ? (
           <div className="bg-white rounded-[20px] p-8 border border-slate-100 shadow-sm text-center my-auto w-full">
@@ -49,13 +49,13 @@ export default async function CommunityPage() {
                 <span className="text-[10px] font-bold text-slate-400 px-1 mb-0.5">
                   {isMe ? 'You' : m.userName}
                 </span>
-                <div className={`max-w-[85%] rounded-[18px] px-3.5 py-2.5 shadow-sm ${
+                <div className={`max-w-[75%] rounded-[16px] px-3 py-2 shadow-sm ${
                   isMe 
                     ? 'bg-purple-600 text-white rounded-br-none' 
                     : 'bg-white text-slate-800 border border-slate-100 rounded-bl-none'
                 }`}>
-                  <p className="text-[13px] font-medium leading-relaxed break-words">{m.message}</p>
-                  <span className={`text-[9px] block text-right mt-1 ${isMe ? 'text-purple-200' : 'text-slate-400'}`}>
+                  <p className="text-[12px] font-medium leading-relaxed break-words">{m.message}</p>
+                  <span className={`text-[8px] block text-right mt-0.5 ${isMe ? 'text-purple-200' : 'text-slate-400'}`}>
                     {time}
                   </span>
                 </div>
@@ -65,19 +65,19 @@ export default async function CommunityPage() {
         )}
       </div>
 
-      {/* Message Input Bar - Positioned cleanly above bottom nav */}
-      <div className="fixed bottom-16 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 z-30 w-full shadow-lg">
+      {/* Message Input Bar - Positioned properly above the bottom navigation */}
+      <div className="fixed bottom-[72px] inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 z-30 w-full shadow-lg">
         <form action={sendCommunityMessageAction} className="flex gap-2 items-center w-full max-w-2xl mx-auto">
           <input 
             type="text" 
             name="message" 
             placeholder="Type a message to your batch..." 
-            className="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2.5 text-[13px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
+            className="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2 text-[12px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
             required
             autoComplete="off"
           />
-          <button type="submit" className="w-10 h-10 rounded-full bg-purple-600 hover:bg-purple-700 active:scale-95 text-white flex items-center justify-center shadow-md shadow-purple-500/25 transition-all shrink-0">
-            <Send className="w-4 h-4" />
+          <button type="submit" className="w-9 h-9 rounded-full bg-purple-600 hover:bg-purple-700 active:scale-95 text-white flex items-center justify-center shadow-md shadow-purple-500/25 transition-all shrink-0">
+            <Send className="w-3.5 h-3.5" />
           </button>
         </form>
       </div>

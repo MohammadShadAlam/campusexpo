@@ -53,10 +53,10 @@ export default async function StudentTimetable({
           </div>
         </div>
       ) : (
-        <div className="flex-1 w-full flex flex-col mt-3">
+        <div className="flex-1 w-full flex flex-col mt-4">
           
-          {/* 2. Days Selector Capsule Container (No Scrollbar/Slider, exactly like reference image 2) */}
-          <div className="px-3 mb-3 w-full">
+          {/* 2. Days Selector Capsule Container (Shifted down properly with mt-2) */}
+          <div className="px-3 mb-3 w-full mt-2">
             <div className="bg-slate-200/70 p-1.5 rounded-[22px] flex items-center justify-between gap-1 w-full shadow-inner">
               {[1, 2, 3, 4, 5, 6].map((d) => {
                 const hasClasses = rows.some((r) => r.day === d);

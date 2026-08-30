@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "./ui";
+import { useState, useEffect } from "react";
 
 type Item = { href: string; icon: string; label: string };
 
@@ -31,10 +32,45 @@ const NAV: Record<string, Item[]> = {
 export function BottomNav({ role }: { role: string }) {
   const pathname = usePathname();
   const items = NAV[role] ?? NAV.student;
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    const handleActivity = () => {
+      setIsVisible(true);
+      clearTimeout(timer);
+      // Agar 3 second tak koi touch ya scroll nahi hua toh navbar niche chup jayega
+      timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 3000);
+    };
+
+    // Scroll aur Touch events ko listen karna
+    window.addEventListener("scroll", handleActivity, { passive: true });
+    window.addEventListener("touchstart", handleActivity, { passive: true });
+    window.addEventListener("mousemove", handleActivity, { passive: true });
+
+    // Initial timer start
+    timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 3000);
+
+    return () => {
+      window.removeEventListener("scroll", handleActivity);
+      window.removeEventListener("touchstart", handleActivity);
+      window.removeEventListener("mousemove", handleActivity);
+      clearTimeout(timer);
+    };
+  }, []);
 
   return (
-    <div className="fixed bottom-4 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
-      <nav className="pointer-events-auto bg-white/95 backdrop-blur-md border border-slate-200/80 shadow-xl shadow-slate-200/50 rounded-full px-3 py-2 flex items-center justify-around gap-2 max-w-sm w-full">
+    <div 
+      className={`fixed bottom-4 inset-x-0 z-50 flex justify-center px-4 transition-all duration-300 transform ${
+        isVisible ? "translate-y-0 opacity-100 pointer-events-auto" : "translate-y-24 opacity-0 pointer-events-none"
+      }`}
+    >
+      <nav className="bg-white/95 backdrop-blur-md border border-slate-200/80 shadow-xl shadow-slate-200/50 rounded-full px-3 py-2 flex items-center justify-around gap-2 max-w-sm w-full">
         {items.map((it) => {
           const active =
             pathname === it.href || (it.href !== `/${role}` && pathname.startsWith(it.href));

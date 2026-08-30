@@ -12,7 +12,7 @@ export default async function CommunityPage() {
   const messages = await getCommunityMessages(st.semester, st.section);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-36 font-sans flex flex-col w-full">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-32 font-sans flex flex-col -mx-3 sm:-mx-6 -mt-4">
       
       {/* Header */}
       <header className="pt-4 pb-3 px-3 bg-white border-b border-slate-100 sticky top-0 z-20 w-full shadow-sm">

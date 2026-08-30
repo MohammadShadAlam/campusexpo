@@ -493,3 +493,21 @@ export async function markNotificationsReadAction() {
   await db.update(notifications).set({ isRead: true }).where(eq(notifications.userId, u.id));
   revalidatePath("/notifications");
 }
+
+import { requireUser } from "@/lib/auth";
+import { communityMessages } from "@/db/schema";
+
+export async function sendCommunityMessageAction(formData: FormData) {
+  const user = await requireUser("student");
+  const message = formData.get("message")?.toString();
+  if (!message || !user.student) return;
+
+  await db.insert(communityMessages).values({
+    semester: user.student.semester,
+    section: user.student.section,
+    userId: user.id,
+    message,
+  });
+
+  revalidatePath("/student/community");
+}
